@@ -16,12 +16,12 @@ task :build do
   raise "FLOK_ENV must be debug or release got #{ENV['FLOK_ENV']}" unless ["DEBUG", "RELEASE"].include? ENV["FLOK_ENV"]
 
   #Compile via xcodebuild
-  FileUtils.mkdir_p "./flok-pod/tmp"
+  FileUtils.mkdir_p "./tmp"
 
   #You should compile it by hand with XCode if you're using it interactively
   unless ENV["INTERACTIVE"] == "true" or ENV["RESTART"] == "true"
     system(%{
-   xcodebuild -workspace flok-pod/Example/flok.xcworkspace -scheme "flok-Example" -sdk "iphonesimulator" -destination "OS=9.1,name=iPhone 4s" -configuration Debug ONLY_ACTIVE_ARCH=NO CONFIGURATION_BUILD_DIR=$PWD/flok-pod/tmp build | xcpretty -c 1>&2
+   xcodebuild -workspace ./Example/flok.xcworkspace -scheme "flok-Example" -sdk "iphonesimulator" -destination "OS=9.1,name=iPhone 4s" -configuration Debug ONLY_ACTIVE_ARCH=NO CONFIGURATION_BUILD_DIR=$PWD/tmp build | xcpretty -c 1>&2
   })
   end
 end
@@ -44,7 +44,7 @@ task :pipe => :build do
 
   #Using xcode interactively, expecting it to be run from xcode
   if ENV["INTERACTIVE"] != "true" and ENV["RESTART"] != "true"
-    system "xcrun simctl install booted ./flok-pod/tmp/flok_Example.app 1>&2"
+    system "xcrun simctl install booted ./tmp/flok_Example.app 1>&2"
     system "xcrun simctl launch booted org.cocoapods.demo.flok-Example 1>&2"
   end
 

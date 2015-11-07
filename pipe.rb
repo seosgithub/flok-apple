@@ -83,7 +83,7 @@ class AutoTCPSocket
 
     #Re-install
     system "xcrun simctl uninstall booted org.cocoapods.demo.flok-Example"
-    system "xcrun simctl install booted ./flok-pod/tmp/flok_Example.app 1>&2"
+    system "xcrun simctl install booted ./tmp/flok_Example.app 1>&2"
 
     system "xcrun simctl launch booted org.cocoapods.demo.flok-Example 1>&2"
 
