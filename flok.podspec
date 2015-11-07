@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = "flok"
-  s.version          = "0.1.0"
+  s.version          = "0.1.1"
   s.summary          = "This driver allows you to run flok applications on iOS, OS X, Apple Watch, and Apple TV."
 
 # This description is used to generate tags and improve search results.
