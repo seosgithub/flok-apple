@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "35DED0C6CC08038C45F5E287665726DF90F14697",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "E2F2C8430FF7A7FA164BED35B9D3E54F2FE78F4B" : 0,
+    "35DED0C6CC08038C45F5E287665726DF90F14697" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "35628E32-6D68-4DD9-9851-9C2A1DD40A8F",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "E2F2C8430FF7A7FA164BED35B9D3E54F2FE78F4B" : "..\/..",
+    "35DED0C6CC08038C45F5E287665726DF90F14697" : "apple\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "flok",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "Example\/flok.xcworkspace",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:sotownsend\/flok-apple.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "35DED0C6CC08038C45F5E287665726DF90F14697"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:sotownsend\/flok.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "E2F2C8430FF7A7FA164BED35B9D3E54F2FE78F4B"
+    }
+  ]
+}

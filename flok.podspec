@@ -29,7 +29,7 @@ Pod::Spec.new do |s|
   s.source           = { :git => "https://github.com/sotownsend/flok-apple.git", :tag => s.version.to_s }
   s.social_media_url = 'https://twitter.com/seotownsend'
 
-  s.platform     = :ios, '8.0'
+  s.platform     = :ios, '9.0'
   s.requires_arc = true
 
   s.source_files = 'Pod/Classes/**/*'
@@ -41,7 +41,7 @@ Pod::Spec.new do |s|
   # s.frameworks = 'UIKit', 'MapKit'
   # s.dependency 'AFNetworking', '~> 2.3'
   s.dependency 'Alamofire', '~> 3.0'
-  s.dependency 'SnapKit'
+  s.dependency 'SnapKit', '~> 0.16'
   s.dependency 'Socket.IO-Client-Swift', '~> 4.1'
   s.dependency 'CocoaAsyncSocket', '~> 7.4'
 end

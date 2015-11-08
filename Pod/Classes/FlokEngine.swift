@@ -108,6 +108,11 @@ import JavaScriptCore
         
     }
     
+    public func boot() {
+        context.evaluateScript("_embed(\"root\", 0, {});")
+        int_dispatch([])
+    }
+    
     //Call into the int_dispatch of the engine
     public func intDispatch(name: String, args: [AnyObject]?) {
         //Construct a packet
