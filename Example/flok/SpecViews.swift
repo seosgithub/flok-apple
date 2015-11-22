@@ -13,11 +13,18 @@ class SpecBlank: FlokView {
         ])
     }
     
-    override func didReceiveEvent(name: String, info: [String : AnyObject]) {
+    func foo(info: [String:AnyObject]) {
         emit("custom_rcv", withInfo: [
-            "name": name,
+            "name": "foo",
             "info": info
         ])
+    }
+    
+    func bar(info: [String:AnyObject]) {
+        emit("custom_rcv", withInfo: [
+            "name": "bar",
+            "info": info
+            ])
     }
 }
 

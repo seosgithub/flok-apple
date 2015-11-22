@@ -10,7 +10,10 @@ class PipeViewController : UIViewController, GCDAsyncSocketDelegate, FlokEngineP
     var connectedSockets: NSMutableArray! = nil
     var flok: FlokEngine! = nil
     
+    static var sharedInstance: PipeViewController!
+    
     override func viewDidLoad() {
+        PipeViewController.sharedInstance = self
         socketQueue = dispatch_queue_create("socketQueue", nil)
         listenSocket = GCDAsyncSocket(delegate: self, delegateQueue: socketQueue)
         
@@ -28,6 +31,7 @@ class PipeViewController : UIViewController, GCDAsyncSocketDelegate, FlokEngineP
         flok = FlokEngine(src: src, inPipeMode: true)
         flok.rootView = self.view
         flok.pipeDelegate = self
+        
     }
     
     required init?(coder aDecoder: NSCoder) {

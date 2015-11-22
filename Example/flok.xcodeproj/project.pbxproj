@@ -17,6 +17,7 @@
 		AA1B60751BD8104000FB1EE4 /* pipe.png in Resources */ = {isa = PBXBuildFile; fileRef = AA1B60741BD8104000FB1EE4 /* pipe.png */; };
 		AA1B60771BD8152700FB1EE4 /* PipeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1B60761BD8152700FB1EE4 /* PipeViewController.swift */; };
 		AA1B60791BD82AA600FB1EE4 /* app.js in Resources */ = {isa = PBXBuildFile; fileRef = AA1B60781BD82AA600FB1EE4 /* app.js */; };
+		AA21CF2F1C0283F3009BB13D /* SpecHookHandlers.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA21CF2E1C0283F3009BB13D /* SpecHookHandlers.swift */; };
 		AA4950331BDEF5F600FE70C7 /* SpecViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA4950321BDEF5F600FE70C7 /* SpecViews.swift */; };
 		AA4950491BE0254800FE70C7 /* lab-512.png in Resources */ = {isa = PBXBuildFile; fileRef = AA4950481BE0254800FE70C7 /* lab-512.png */; };
 /* End PBXBuildFile section */
@@ -57,6 +58,7 @@
 		AA1B607D1BD82E2400FB1EE4 /* Pods_flok_Tests.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Pods_flok_Tests.framework; path = "Pods/../build/Debug-iphoneos/Pods_flok_Tests.framework"; sourceTree = "<group>"; };
 		AA1B607E1BD82E2400FB1EE4 /* Quick.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quick.framework; path = "Pods/../build/Debug-iphoneos/Quick.framework"; sourceTree = "<group>"; };
 		AA1B60851BD82F0600FB1EE4 /* CocoaAsyncSocket.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaAsyncSocket.framework; path = "Pods/../build/Debug-iphoneos/CocoaAsyncSocket.framework"; sourceTree = "<group>"; };
+		AA21CF2E1C0283F3009BB13D /* SpecHookHandlers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpecHookHandlers.swift; sourceTree = "<group>"; };
 		AA4950321BDEF5F600FE70C7 /* SpecViews.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpecViews.swift; sourceTree = "<group>"; };
 		AA4950481BE0254800FE70C7 /* lab-512.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "lab-512.png"; sourceTree = "<group>"; };
 		B44725B055FA0993907BB4E3 /* Pods-flok_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-flok_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-flok_Example/Pods-flok_Example.debug.xcconfig"; sourceTree = "<group>"; };
@@ -193,9 +195,18 @@
 			name = Assets;
 			sourceTree = "<group>";
 		};
+		AA21CF2D1C0283E7009BB13D /* Hook */ = {
+			isa = PBXGroup;
+			children = (
+				AA21CF2E1C0283F3009BB13D /* SpecHookHandlers.swift */,
+			);
+			name = Hook;
+			sourceTree = "<group>";
+		};
 		AA49504C1BE041A700FE70C7 /* ModuleSpec */ = {
 			isa = PBXGroup;
 			children = (
+				AA21CF2D1C0283E7009BB13D /* Hook */,
 				AA49504D1BE041AF00FE70C7 /* UI */,
 			);
 			name = ModuleSpec;
@@ -416,6 +427,7 @@
 				AA1B60771BD8152700FB1EE4 /* PipeViewController.swift in Sources */,
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
+				AA21CF2F1C0283F3009BB13D /* SpecHookHandlers.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

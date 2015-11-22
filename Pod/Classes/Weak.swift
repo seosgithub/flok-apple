@@ -54,4 +54,16 @@ class WeakValueDictionary<T: Hashable, Y: AnyObject> {
         
         return out
     }
+    
+    var values: [Y] {
+        var out: [Y] = []
+        for (k, v) in entries {
+            
+            //Ensure the value is still in memory
+            //before returning the key
+            if let value = v.value { out.append(value) }
+        }
+        
+        return out
+    }
 }

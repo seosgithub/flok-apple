@@ -6,58 +6,43 @@
 	<dict>
 		<key>Alamofire.xcscheme</key>
 		<dict>
-			<key>orderHint</key>
-			<integer>2</integer>
+			<key>isShown</key>
+			<false/>
 		</dict>
 		<key>CocoaAsyncSocket.xcscheme</key>
 		<dict>
-			<key>orderHint</key>
-			<integer>3</integer>
+			<key>isShown</key>
+			<false/>
 		</dict>
 		<key>Pods-flok_Example.xcscheme</key>
 		<dict>
-			<key>orderHint</key>
-			<integer>5</integer>
+			<key>isShown</key>
+			<false/>
 		</dict>
 		<key>Pods-flok_Tests.xcscheme</key>
 		<dict>
-			<key>orderHint</key>
-			<integer>6</integer>
-		</dict>
-		<key>SnapKit.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>7</integer>
+			<key>isShown</key>
+			<false/>
 		</dict>
 		<key>Socket.IO-Client-Swift.xcscheme</key>
 		<dict>
-			<key>orderHint</key>
-			<integer>8</integer>
+			<key>isShown</key>
+			<false/>
 		</dict>
 		<key>flok-flok.xcscheme</key>
 		<dict>
-			<key>orderHint</key>
-			<integer>4</integer>
+			<key>isShown</key>
+			<false/>
 		</dict>
-		<key>flok.xcscheme_^#shared#^_</key>
+		<key>flok.xcscheme</key>
 		<dict>
-			<key>orderHint</key>
-			<integer>0</integer>
+			<key>isShown</key>
+			<false/>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>100D0618422192D5371D3CE1C089A4E9</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>2D1137D3F8A53934FABD2A90767F582B</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>34C3B1E0E813FB479702F1A3E7A99E1A</key>
+		<key>1841A99A8616FEE068341FC6476A5780</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -67,17 +52,22 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>4DEC3E7EE834968156D437AF5C020D2F</key>
+		<key>8E114C7C3276AE9FBA68E1E4FA0C8139</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>D8F56B874CE396419440478CD3E27925</key>
+		<key>A8F4025FC3A87DEF403B79375123F0F8</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>DBF764831D0E53FDC08A619AF8A0B459</key>
+		<key>EBC04638137B4C5914C827914B989B03</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>F7ADF1B31B5DDA89DBD7C8F28711C63E</key>
 		<dict>
 			<key>primary</key>
 			<true/>

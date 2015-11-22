@@ -10,6 +10,8 @@ DEBUG:
     - rtc
     - timer
     - sockio
+    - hook
+    - dlink
   defines:
     - mem_pager
     - sockio_pager

@@ -9,6 +9,14 @@ import JavaScriptCore
     optional func flokEngineDidReceiveIntDispatch(q: [AnyObject])
 }
 
+enum FlokPriorityQueue: Int {
+    case Main = 0
+    case Net = 1
+    case Disk = 2
+    case Cpu = 3
+    case Gpu = 4
+}
+
 //Very-special class that adds methods from the modules
 //at runtime via the objective-c runtime. Since they 
 //already have the whole dynamic dispatch thing down,
@@ -67,11 +75,15 @@ import JavaScriptCore
         FlokTimerModule(),
         FlokDlinkModule(),
         FlokEventModule(),
+        FlokHookModule(),
     ]
     lazy var runtime: FlokRuntime = FlokRuntime()
     
+    //Operation queues for net, disk, cpu, and gpu
+    lazy var operationQueues: [FlokPriorityQueue:NSOperationQueue] = [.Net:NSOperationQueue(), .Disk:NSOperationQueue(), .Cpu: NSOperationQueue(), .Gpu: NSOperationQueue()]
+    
     //This should be moved to the UI module
-    public weak var rootView: UIView!
+    public var rootView: UIView!
     
     public convenience init(src: String) {
         self.init(src: src, inPipeMode: false)
@@ -109,7 +121,10 @@ import JavaScriptCore
     }
     
     public func boot() {
+        runtime.performSelector("if_timer_init:", withObject: [4])
+        runtime.performSelector("if_rtc_init:", withObject: [])
         context.evaluateScript("_embed(\"root\", 0, {});")
+        
         int_dispatch([])
     }
     
@@ -124,34 +139,50 @@ import JavaScriptCore
     }
     
     public func int_dispatch(q: [AnyObject]) {
-        if (inPipeMode) {
-            pipeDelegate?.flokEngineDidReceiveIntDispatch?(q)
+        let block = { [weak self] in
+            if (self?.inPipeMode ?? false) {
+                self?.pipeDelegate?.flokEngineDidReceiveIntDispatch?(q)
+            } else {
+                self?.intDispatchMethod.callWithArguments([q])
+                
+                let pending = self?.context.evaluateScript("JSON.parse(JSON.stringify(if_dispatch_pending))").toArray() ?? []
+                self?.context.evaluateScript("if_dispatch_pending = []")
+                if pending.count > 0 {
+                    self?.if_dispatch(pending)
+                }
+            }
+        }
+        
+        if NSThread.isMainThread() {
+            block()
         } else {
-            intDispatchMethod.callWithArguments([q])
-            
-            let pending = context.evaluateScript("JSON.parse(JSON.stringify(if_dispatch_pending))").toArray()
-            context.evaluateScript("if_dispatch_pending = []")
-            if pending.count > 0 {
-                if_dispatch(pending)
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)) {
+                dispatch_async(dispatch_get_main_queue()) {
+                    block()
+                }
             }
         }
     }
     
     //Will be called by the JS engine itself or pipe to simulate the JS engine
     public func if_dispatch(q: [AnyObject]) {
-        NSLog("Got q \(q)")
         //Priority array
+        var isIncomplete = false
         for qq in q {
             if let qq = qq as? String {
                 if qq == "i" {
-                    int_dispatch([])
+                    isIncomplete = true
                 } else {
                     NSException(name: "FlokEngine", reason: "Got a string in the if_dispatch, but it wasn't 'i' for incomplete", userInfo: nil).raise()
                 }
             } else if let qq = qq as? [AnyObject] {
                 
-                NSLog("\tDecoding q \(qq)")
-                var priority = qq[0] as! Int
+                let priorityNum = qq[0] as! Int
+                guard let priority =  FlokPriorityQueue(rawValue: priorityNum) else {
+                    NSException(name: "FlokEngine", reason: "Priority given, '\(priorityNum)' was not an available priority!", userInfo: nil).raise()
+                    return
+                }
+                
                 var i = 1
                 while (i < qq.count) {
                     var args: [AnyObject] = []
@@ -160,15 +191,22 @@ import JavaScriptCore
                     args.appendContentsOf(qq[i..<(i+argCount)])
                     i += argCount
                     
-                    NSLog("\t\tHandling \(cmd) with args: \(args)")
-                    handleIfCommand(cmd, withArgs: args)
+                    switch priority {
+                    case .Main:
+                        handleIfCommand(cmd, withArgs: args)
+                    default:
+                        operationQueues[priority]?.addOperationWithBlock { [weak self] in
+                            self?.handleIfCommand(cmd, withArgs: args)
+                        }
+                    }
                 }
             }
         }
+        
+        if isIncomplete { int_dispatch([]) }
     }
     
     func handleIfCommand(cmd: String, withArgs args: [AnyObject]) {
-        NSLog("perform [\(cmd)] with args [\(args)]")
         if runtime.respondsToSelector(Selector("\(cmd):")) {
             runtime.performSelector(Selector("\(cmd):"), withObject: args)
         } else {

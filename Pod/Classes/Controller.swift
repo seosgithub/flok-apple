@@ -8,7 +8,7 @@
     func if_controller_init(args: [AnyObject]) {
         let cbp = args[0] as! Int      //Controller base-pointer
         let vbp = args[1] as! Int      //View base-pointer
-        let cname = args[2] as! String //Controller name
+        //let cname = args[2] as! String //Controller name
         let info = args[3] as! [String:AnyObject]
         
         //Lookup up view that is part of this controller

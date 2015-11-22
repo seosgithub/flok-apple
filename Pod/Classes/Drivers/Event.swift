@@ -13,7 +13,12 @@
             if name == "action" {
                 view.didSwitchFromAction(info["from"] as? String!, toAction: info["to"] as? String!)
             } else {
-                view.didReceiveEvent(name, info: info)
+                let sel = Selector("\(name.snakeToCamelCase):")
+                if view.respondsToSelector(sel) {
+                    view.performSelector(sel, withObject: info)
+                } else {
+                    NSLog("Warning: The view named \(view.dynamicType) did not respond to the selector named \(name)")
+                }
             }
         } else {
             NSLog("Warning: event sent to view (controller) with controller base pointer \(ep) was dropped because the view no longer exists")

@@ -6,9 +6,10 @@
     func if_per_set(args: [AnyObject]) {
         let ns = args[0] as! String
         let key = args[1] as! String
-        let value = args[2] as! String
+        let value = args[2]
         
-        NSUserDefaults.standardUserDefaults().setObject(value, forKey: nsk(ns, key))
+        let data = NSKeyedArchiver.archivedDataWithRootObject(value)
+        NSUserDefaults.standardUserDefaults().setObject(data, forKey: nsk(ns, key))
         NSUserDefaults.standardUserDefaults().synchronize()
     }
 
@@ -33,12 +34,21 @@
     }
 
     func if_per_get(args: [AnyObject]) {
+        NSUserDefaults.standardUserDefaults().synchronize()
         let s = args[0] as! String
         let ns = args[1] as! String
         let key = args[2] as! String
         
-       let res =  NSUserDefaults.standardUserDefaults().objectForKey(nsk(ns, key)) ?? NSNull()
-       engine.int_dispatch([4, "int_per_get_res", s, ns, key, res])
+       if let data =  NSUserDefaults.standardUserDefaults().objectForKey(nsk(ns, key)) as? NSData {
+           if let res = NSKeyedUnarchiver.unarchiveObjectWithData(data) {
+               engine.int_dispatch([4, "int_per_get_res", s, ns, key, res])
+           } else {
+               puts("FlokPersistModule: Failed to unarchive result for key: \(key) with data: \(data)")
+               engine.int_dispatch([4, "int_per_get_res", s, ns, key, NSNull()])
+           }
+       } else {
+           engine.int_dispatch([4, "int_per_get_res", s, ns, key, NSNull()])
+       }
     }
 }
 

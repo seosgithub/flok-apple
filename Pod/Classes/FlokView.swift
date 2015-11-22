@@ -1,5 +1,4 @@
 import UIKit
-import SnapKit
 
 public class FlokView: UIView, Preloadable
 {
@@ -12,38 +11,23 @@ public class FlokView: UIView, Preloadable
     public weak var parentView: UIView!
     
     weak var engine: FlokEngine!
+    
+    public var name: String!
 
     //Returns a auto-created spot if there is no spot
-    func spotWithName(name: String) -> FlokSpot {
+    public func spotWithName(name: String) -> FlokSpot! {
+        //Did the spot exist already?
         for e in spots {
             if e.name == name { return e }
         }
-
-        NSLog("Warning: spot named \(name) was auto-created")
-        let autoSpot = FlokSpot()
-        autoSpot.name = name
-        self.addSubview(autoSpot)
-        autoSpot.snp_makeConstraints { make in
-            make.size.equalTo(self.snp_size).multipliedBy(0.2)
-            make.center.equalTo(self.snp_center).multipliedBy(0.2)
-            
-            if self.spots.count > 0 {
-                make.left.equalTo(self.spots.last!.snp_right)
-            }
-            return
-        }
-        spots.append(autoSpot)
-        autoSpot.backgroundColor = UIColor.redColor()
         
-        let label = UILabel()
-        label.text = name
-        autoSpot.addSubview(label)
-        label.snp_makeConstraints { make in
-            make.center.equalTo(autoSpot.snp_center)
-            make.size.equalTo(autoSpot.snp_size)
-            return
-        }
-        return autoSpot
+        //Create a view
+        let spot = FlokSpot()
+        spot.translatesAutoresizingMaskIntoConstraints = false
+        spot.name = name
+        self.addSubview(spot)
+        spots.append(spot)
+        return spot
     }
     public var bp: Int!  //View base-pointer
     
@@ -55,12 +39,15 @@ public class FlokView: UIView, Preloadable
     //-----------------------------------------------------------------------------------------------------
     required public override init(frame: CGRect) {
         super.init(frame: frame)
-//        defaultInit()
+        defaultInit()
     }
     
     public required init(coder: NSCoder) {
         super.init(coder: coder)!
-//        defaultInit()
+        defaultInit()
+    }
+    
+    public func defaultInit() {
     }
     
     public convenience init() {
@@ -82,14 +69,10 @@ public class FlokView: UIView, Preloadable
     }
     
     public func didSwitchFromAction(from: String?, toAction to: String?) {
-        
+        puts("Not handling action from \(from) => \(to) for controller \(self.name)")
     }
     
-    public func didReceiveEvent(name: String, info: [String:AnyObject]) {
-        
-    }
-    
-    public func emit(name: String, withInfo info: [String:AnyObject]) {
+    public func emit(name: String, withInfo info: [String:AnyObject]=[:]) {
         engine.int_dispatch([3, "int_event", cbp!, name, info])
     }
     

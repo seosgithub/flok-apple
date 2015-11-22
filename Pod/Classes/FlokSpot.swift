@@ -7,7 +7,7 @@ public class FlokSpot: UIView
     //Property
     //-----------------------------------------------------------------------------------------------------
     var bp: Int!
-    var name: String!
+    @IBInspectable public var name: String!
     
     var views: [FlokView] = []
     
@@ -28,6 +28,7 @@ public class FlokSpot: UIView
     }
     
     func defaultInit() {
+        
     }
     
     public override func layoutSubviews() {

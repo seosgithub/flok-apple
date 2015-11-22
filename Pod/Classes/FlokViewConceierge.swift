@@ -31,7 +31,7 @@ public class _FlokViewConceierge {
             return klass
         } else {
             NSLog("FittrConceierge: Warning, couldn't find flok-view named \(name)")
-            return FlokView.self
+            return FlokDebugView.self
         }
         
     }

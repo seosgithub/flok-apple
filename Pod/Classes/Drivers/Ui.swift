@@ -23,19 +23,20 @@
             NSException(name: "unhandled view", reason: "unhanded view named \(name)", userInfo: nil).raise()
         }
 
-        let view = proto!.init(frame: CGRectMake(0, 0, 400, 400))
+        let view = proto!.init(frame: CGRectZero)
         view.bp = tpBase
         view.engine = self.engine
+        view.name = name
 
         //Put the base view inside
         var tpIdx = tpBase  //Start with the base pointer
         for target in tpTargets {
             if target == "main" {
-                self.dynamicType.uiTpToSelector[tpIdx] = view
+                FlokUiModule.uiTpToSelector[tpIdx] = view
             } else {
                 let spot = view.spotWithName(target)
                 spot.bp = tpIdx
-                self.dynamicType.uiTpToSelector[tpIdx] = spot
+                FlokUiModule.uiTpToSelector[tpIdx] = spot
             }
 
             tpIdx += 1
@@ -53,7 +54,7 @@
           target = engine.rootView
         } else {
           //Lookup view
-          target = self.dynamicType.uiTpToSelector[p]
+          target = FlokUiModule.uiTpToSelector[p]
         }
         
         if target == nil {
@@ -61,7 +62,7 @@
             return
         }
 
-        let view = self.dynamicType.uiTpToSelector[vp]
+        let view = FlokUiModule.uiTpToSelector[vp]
         if let view = view as? FlokView {
             if let spot = target as? FlokSpot {
                 spot.views.append(view as! FlokView)
@@ -69,6 +70,17 @@
             
             view.parentView = target
             target!.addSubview(view)
+            
+            //Adding a view to a spot or root view, we need to make sure the view is set to the full size
+            if target is FlokSpot || target === engine.rootView {
+                view.translatesAutoresizingMaskIntoConstraints = false
+                let top = NSLayoutConstraint(item: view, attribute: .Top, relatedBy: .Equal, toItem: target, attribute: .Top, multiplier: 1, constant: 0)
+                let bottom = NSLayoutConstraint(item: view, attribute: .Bottom, relatedBy: .Equal, toItem: target, attribute: .Bottom, multiplier: 1, constant: 0)
+                let left = NSLayoutConstraint(item: view, attribute: .Left, relatedBy: .Equal, toItem: target, attribute: .Left, multiplier: 1, constant: 0)
+                let right = NSLayoutConstraint(item: view, attribute: .Right, relatedBy: .Equal, toItem: target, attribute: .Right, multiplier: 1, constant: 0)
+                target!.addConstraints([top, bottom, left, right])
+            }
+            
         } else {
             NSException(name: "FlokUIModule", reason: "Tried to if_attach_view with \(args), but the view couldn't be located or was not a FlokView", userInfo: nil).raise()
         }
@@ -90,7 +102,7 @@
             
             engine.intDispatch("spec", args: subVps)
         } else {
-            let spot = self.dynamicType.uiTpToSelector[vp] as! FlokSpot
+            let spot = FlokUiModule.uiTpToSelector[vp] as! FlokSpot
             let viewPointersInSpot = spot.views.map{$0.bp}
             engine.intDispatch("spec", args: viewPointersInSpot)
         }
@@ -98,14 +110,14 @@
 
     func if_ui_spec_view_exists(args: [AnyObject]) {
       let p = args[0] as! Int
-      var res = (self.dynamicType.uiTpToSelector[p] != nil)
+      var res = (FlokUiModule.uiTpToSelector[p] != nil)
       self.engine.int_dispatch([1, "spec", res])
     }
 
     func if_free_view(args: [AnyObject]) {
       let vp = args[0] as! Int
 
-      let view = self.dynamicType.uiTpToSelector[vp]
+      let view = FlokUiModule.uiTpToSelector[vp]
       if view == nil { NSException(name: "FlokUIModule", reason: "Tried to free view with pointer \(args) but it didn't exist in uiTpToSelector", userInfo: nil).raise() }
       if let view = view as? FlokView {
         //Find all child views and spots
@@ -122,7 +134,9 @@
 
         //Pointers for both spots and views
         for p in found {
-          self.dynamicType.uiTpToSelector.removeValueForKey(p)
+            if p != nil {
+          FlokUiModule.uiTpToSelector.removeValueForKey(p)
+            }
         }
 
         if let parentSpot = view.parentView as? FlokSpot {
@@ -143,7 +157,7 @@
     func if_ui_spec_view_is_visible(args: [AnyObject]) {
       let p = args[0] as! Int
 
-      let view = self.dynamicType.uiTpToSelector[p]
+      let view = FlokUiModule.uiTpToSelector[p]
 
       if let view = view as UIView! {
         let isVisible = view.isDescendantOfView(engine.rootView)
