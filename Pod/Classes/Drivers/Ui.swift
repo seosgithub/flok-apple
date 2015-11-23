@@ -19,11 +19,8 @@
         
         //Get the prototype that mateches
         let proto = FlokViewConceierge.viewWithName(name)
-        if proto == nil {
-            NSException(name: "unhandled view", reason: "unhanded view named \(name)", userInfo: nil).raise()
-        }
 
-        let view = proto!.init(frame: CGRectZero)
+        let view = proto.init(frame: CGRectZero)
         view.bp = tpBase
         view.engine = self.engine
         view.name = name

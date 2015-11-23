@@ -1,6 +1,6 @@
 import UIKit
 
-public class FlokView: UIView, Preloadable
+public class FlokView: UIView
 {
     //-----------------------------------------------------------------------------------------------------
     //Property
