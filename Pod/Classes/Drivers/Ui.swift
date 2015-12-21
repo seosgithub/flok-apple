@@ -115,7 +115,11 @@
       let vp = args[0] as! Int
 
       let view = FlokUiModule.uiTpToSelector[vp]
-      if view == nil { NSException(name: "FlokUIModule", reason: "Tried to free view with pointer \(args) but it didn't exist in uiTpToSelector", userInfo: nil).raise() }
+      if view == nil {
+        //For hook transitions, there is a chance that we receive the request to remove a view that was undergoing a transition but was removed when a parent-hierarchy was wiped out. This is a 'feature' as flok dosen't want to waste time managing the view hierarchy
+//        NSException(name: "FlokUIModule", reason: "Tried to free view with pointer \(args) but it didn't exist in uiTpToSelector", userInfo: nil).raise()
+        return
+      }
       if let view = view as? FlokView {
         //Find all child views and spots
         var found = [view.bp]
@@ -165,5 +169,3 @@
       }
     }
 }
-
-

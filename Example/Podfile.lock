@@ -1,11 +1,11 @@
 PODS:
-  - Alamofire (3.1.2)
+  - Alamofire (3.1.4)
   - CocoaAsyncSocket (7.4.2)
   - flok (0.1.1):
     - Alamofire (~> 3.0)
     - CocoaAsyncSocket (~> 7.4)
     - Socket.IO-Client-Swift (~> 4.1)
-  - Socket.IO-Client-Swift (4.1.1)
+  - Socket.IO-Client-Swift (4.1.4)
 
 DEPENDENCIES:
   - flok (from `../`)
@@ -15,9 +15,9 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  Alamofire: 7c16ca65f3c7e681fd925fd7f2dec7747ff96855
+  Alamofire: fbc829692f351fa1d8a31dd75fd7f7f56fea31fb
   CocoaAsyncSocket: f5783bdedd232d91b89769bc4b5a1580aed518ad
-  flok: fbe8c554d82428e572f5a450b9954899e5f2da92
-  Socket.IO-Client-Swift: 2620dbb779edbbd0bc0cac96c053ca7c35aba652
+  flok: c7a8c386f3e39f87d987f53db6fb4992b09467ba
+  Socket.IO-Client-Swift: 1ac3925cc62a83e1b981b81692203a7405d6ca3c
 
 COCOAPODS: 0.39.0

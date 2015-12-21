@@ -48,10 +48,12 @@ public class FlokView: UIView
     }
     
     public func defaultInit() {
+        self.backgroundColor = UIColor.whiteColor()
     }
     
     public convenience init() {
         self.init(frame: CGRectZero)
+        defaultInit()
     }
     
     public func didLoad() {

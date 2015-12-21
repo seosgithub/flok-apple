@@ -12,6 +12,7 @@ DEBUG:
     - sockio
     - hook
     - dlink
+    - about
   defines:
     - mem_pager
     - sockio_pager
@@ -27,7 +28,7 @@ RELEASE:
     - rtc
     - hook
     - dlink
+    - about
   defines:
     - mem_pager
     - sockio_pager
-

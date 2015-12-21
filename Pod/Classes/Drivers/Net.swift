@@ -30,7 +30,7 @@ extension Alamofire.Method {
 
 @objc class FlokNetModule : FlokModule {
     override var exports: [String] {
-        return ["if_net_req:"]
+        return ["if_net_req:", "if_net_req2:"]
     }
     
     func if_net_req(args: [AnyObject]) {
@@ -43,23 +43,45 @@ extension Alamofire.Method {
             switch response.result {
             case .Success:
                 if let statusCode = response.response?.statusCode {
-                    if 200...299 ~= statusCode {
-                        if let json = response.result.value as? [String:AnyObject] {
-                            self.engine.int_dispatch([3, "int_net_cb", tpBase, true, json])
-                        } else {
-                            self.engine.int_dispatch([3, "int_net_cb", tpBase, false, "Got back Non JSON response: \(response.result.value)"])
-                        }
-                        
+                    if let json = response.result.value as? [String:AnyObject] {
+                        self.engine.int_dispatch([3, "int_net_cb", tpBase, statusCode, json])
                     } else {
-                        self.engine.int_dispatch([3, "int_net_cb", tpBase, false, "Got back Non 2XX response: \(statusCode)"])
+                        self.engine.int_dispatch([3, "int_net_cb", tpBase, -1, "Got back Non JSON response: \(response.result.value)"])
                     }
                 } else {
-                    self.engine.int_dispatch([3, "int_net_cb", tpBase, false, "Flok Internal Error - request was successful but there was no response"])
+                    self.engine.int_dispatch([3, "int_net_cb", tpBase, -1, "Flok-Apple Internal Error - request was successful but there was no response"])
                 }
 
             case .Failure(let error):
-                self.engine.int_dispatch([3, "int_net_cb", tpBase, false, "Failed to connect"])
+                self.engine.int_dispatch([3, "int_net_cb", tpBase, -1, "Failed to connect: \(error.localizedDescription)"])
             }
         }
     }
+    
+    func if_net_req2(args: [AnyObject]) {
+        let verb = args[0] as! String
+        let headers = args[1] as! [String:String]
+        let url = args[2] as! String
+        let params = args[3] as! [String:AnyObject]
+        let tpBase = args[4] as! Int
+        
+        Alamofire.request(Alamofire.Method(withString: verb), url, parameters: params, headers: headers).responseJSON { response in
+            switch response.result {
+            case .Success:
+                if let statusCode = response.response?.statusCode {
+                    if let json = response.result.value as? [String:AnyObject] {
+                        self.engine.int_dispatch([3, "int_net_cb", tpBase, statusCode, json])
+                    } else {
+                        self.engine.int_dispatch([3, "int_net_cb", tpBase, -1, "Got back Non JSON response: \(response.result.value)"])
+                    }
+                } else {
+                    self.engine.int_dispatch([3, "int_net_cb", tpBase, -1, "Flok-Apple Internal Error - request was successful but there was no response"])
+                }
+                
+            case .Failure(let error):
+                self.engine.int_dispatch([3, "int_net_cb", tpBase, -1, "Failed to connect: \(error.localizedDescription)"])
+            }
+        }
+    }
+    
 }

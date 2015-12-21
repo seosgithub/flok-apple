@@ -1,8 +1,8 @@
 //
-//  SocketAckEmitter.swift
+//  SocketEngineSpec.swift
 //  Socket.IO-Client-Swift
 //
-//  Created by Erik Little on 9/16/15.
+//  Created by Erik Little on 10/7/15.
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -21,23 +21,22 @@
 //  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
+//
 
 import Foundation
 
-public final class SocketAckEmitter: NSObject {
-    let socket: SocketIOClient
-    let ackNum: Int
+@objc public protocol SocketEngineSpec {
+    weak var client: SocketEngineClient? {get set}
+    var cookies: [NSHTTPCookie]? {get}
+    var sid: String {get}
+    var socketPath: String {get}
+    var urlPolling: String {get}
+    var urlWebSocket: String {get}
     
-    init(socket: SocketIOClient, ackNum: Int) {
-        self.socket = socket
-        self.ackNum = ackNum
-    }
+    init(client: SocketEngineClient, url: String, options: NSDictionary?)
     
-    public func with(items: AnyObject...) {
-        socket.emitAck(ackNum, withItems: items)
-    }
-    
-    public func with(items: [AnyObject]) {
-        socket.emitAck(ackNum, withItems: items)
-    }
+    func close()
+    func open(opts: [String: AnyObject]?)
+    func send(msg: String, withData datas: [NSData])
+    func write(msg: String, withType type: SocketEnginePacketType, withData data: [NSData])
 }

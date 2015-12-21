@@ -17,7 +17,7 @@ socket.on("currentAmount") {data, ack in
             socket.emit("update", ["amount": cur + 2.50])
         }
 
-        ack?.with("Got your currentAmount", "dude")
+        ack.with("Got your currentAmount", "dude")
     }
 }
 
@@ -62,14 +62,14 @@ If you need Swift 1.1/Xcode 6.2 use v1.5.2. (Pre-Swift 1.2 support is no longer 
 
 Manually (iOS 7+)
 -----------------
-1. Copy the SocketIOClientSwift folder into your Xcode project. (Make sure you add the files to your target(s))
+1. Copy the Source folder into your Xcode project. (Make sure you add the files to your target(s))
 2. If you plan on using this from Objective-C, read [this](https://developer.apple.com/library/ios/documentation/Swift/Conceptual/BuildingCocoaApps/MixandMatch.html) on exposing Swift code to Objective-C.
 
 Carthage
 -----------------
 Add this line to your `Cartfile`:
 ```
-github "socketio/socket.io-client-swift" ~> 4.1.1 # Or latest version
+github "socketio/socket.io-client-swift" ~> 4.1.4 # Or latest version
 ```
 
 Run `carthage update --platform ios,macosx`.
@@ -83,7 +83,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 platform :ios, '8.0'
 use_frameworks!
 
-pod 'Socket.IO-Client-Swift', '~> 4.1.1' # Or latest version
+pod 'Socket.IO-Client-Swift', '~> 4.1.4' # Or latest version
 ```
 
 Install pods:
@@ -111,7 +111,7 @@ CocoaSeeds
 Add this line to your `Seedfile`:
 
 ```
-github "socketio/socket.io-client-swift", "v4.1.1", :files => "SocketIOClientSwift/*.swift" # Or latest version
+github "socketio/socket.io-client-swift", "v4.1.4", :files => "SocketIOClientSwift/*.swift" # Or latest version
 ```
 
 Run `seed install`.
@@ -120,7 +120,7 @@ Run `seed install`.
 ##API
 Constructors
 -----------
-`init(var socketURL: String, options: Set<SocketIOClientOption>? = nil)` - Creates a new SocketIOClient. opts is a Set of SocketIOClientOption. If your socket.io server is secure, you need to specify `https` in your socketURL.
+`init(var socketURL: String, options: Set<SocketIOClientOption> = [])` - Creates a new SocketIOClient. opts is a Set of SocketIOClientOption. If your socket.io server is secure, you need to specify `https` in your socketURL.
 
 `convenience init(socketURL: String, options: NSDictionary?)` - Same as above, but meant for Objective-C. See Options on how convert between SocketIOClientOptions and dictionary keys.
 
@@ -134,6 +134,7 @@ case Reconnects(Bool) // Whether to reconnect on server lose. Default is `true`
 case ReconnectAttempts(Int) // How many times to reconnect. Default is `-1` (infinite tries)
 case ReconnectWait(Int) // Amount of time to wait between reconnects. Default is `10`
 case ForcePolling(Bool) // `true` forces the client to use xhr-polling. Default is `false`
+case ForceNew(Bool) // Will a create a new engine for each connect. Useful if you find a bug in the engine related to reconnects
 case ForceWebsockets(Bool) // `true` forces the client to use WebSockets. Default is `false`
 case Nsp(String) // The namespace to connect to. Must begin with /. Default is `/`
 case Cookies([NSHTTPCookie]) // An array of NSHTTPCookies. Passed during the handshake. Default is nil.
@@ -145,11 +146,13 @@ case ExtraHeaders([String: String]) // Adds custom headers to the initial reques
 case HandleQueue(dispatch_queue_t) // The dispatch queue that handlers are run on. Default is the main queue.
 case VoipEnabled(Bool) // Only use this option if you're using the client with VoIP services. Changes the way the WebSocket is created. Default is false
 case Secure(Bool) // If the connection should use TLS. Default is false.
+case SelfSigned(Bool) // Sets WebSocket.selfSignedSSL (Don't do this, iOS will yell at you)
+
 ```
 Methods
 -------
-1. `on(event: String, callback: NormalCallback)` - Adds a handler for an event. Items are passed by an array. `ack` can be used to send an ack when one is requested. See example.
-2. `once(event: String, callback: NormalCallback)` - Adds a handler that will only be executed once.
+1. `on(event: String, callback: NormalCallback) -> NSUUID` - Adds a handler for an event. Items are passed by an array. `ack` can be used to send an ack when one is requested. See example. Returns a unique id for the handler.
+2. `once(event: String, callback: NormalCallback) -> NSUUID` - Adds a handler that will only be executed once. Returns a unique id for the handler.
 3. `onAny(callback:((event: String, items: AnyObject?)) -> Void)` - Adds a handler for all events. It will be called on any received event.
 4. `emit(event: String, _ items: AnyObject...)` - Sends a message. Can send multiple items.
 5. `emit(event: String, withItems items: [AnyObject])` - `emit` for Objective-C
@@ -162,7 +165,8 @@ Methods
 12. `joinNamespace()` - Causes the client to join nsp. Shouldn't need to be called unless you change nsp manually.
 13. `leaveNamespace()` - Causes the client to leave the nsp and go back to /
 14. `off(event: String)` - Removes all event handlers for event.
-15. `removeAllHandlers()` - Removes all handlers.
+15. `off(id id: NSUUID)` - Removes the event that corresponds to id.
+16. `removeAllHandlers()` - Removes all handlers.
 
 Client Events
 ------

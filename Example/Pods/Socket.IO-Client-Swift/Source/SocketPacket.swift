@@ -28,8 +28,8 @@ import Foundation
 struct SocketPacket {
     private let placeholders: Int
     private var currentPlace = 0
-
-	private static let logType = "SocketPacket"
+    
+    private static let logType = "SocketPacket"
 
     let nsp: String
     let id: Int
@@ -45,7 +45,7 @@ struct SocketPacket {
         if data.count == 0 {
             return nil
         } else {
-            if type == PacketType.Event || type == PacketType.BinaryEvent {
+            if type == .Event || type == .BinaryEvent {
                 arr.removeAtIndex(0)
                 return arr
             } else {
@@ -109,7 +109,8 @@ struct SocketPacket {
                     
                     message += jsonString! as String + ","
                 } catch {
-                    Logger.error("Error creating JSON object in SocketPacket.completeMessage", type: SocketPacket.logType)
+                    DefaultSocketLogger.Logger.error("Error creating JSON object in SocketPacket.completeMessage",
+                        type: SocketPacket.logType)
                 }
             } else if var str = arg as? String {
                 str = str["\n"] ~= "\\\\n"
@@ -295,12 +296,7 @@ private extension SocketPacket {
         var binary = [NSData]()
         
         for i in 0..<data.count {
-            if data[i] is NSArray || data[i] is NSDictionary {
-                data[i] = shred(data[i], binary: &binary)
-            } else if let bin = data[i] as? NSData {
-                data[i] = ["_placeholder" :true, "num": binary.count]
-                binary.append(bin)
-            }
+            data[i] = shred(data[i], binary: &binary)
         }
         
         return (data, binary)

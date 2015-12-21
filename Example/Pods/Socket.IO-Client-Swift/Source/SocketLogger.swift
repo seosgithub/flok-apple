@@ -1,8 +1,8 @@
 //
-//  EventHandler.swift
+//  SocketLogger.swift
 //  Socket.IO-Client-Swift
 //
-//  Created by Erik Little on 1/18/15.
+//  Created by Erik Little on 4/11/15.
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -24,23 +24,38 @@
 
 import Foundation
 
-private func emitAckCallback(socket: SocketIOClient, num: Int?) -> SocketAckEmitter? {
-    return num != nil ? SocketAckEmitter(socket: socket, ackNum: num!) : nil
+public protocol SocketLogger: class {
+    /// Whether to log or not
+    var log: Bool {get set}
+    
+    /// Normal log messages
+    func log(message: String, type: String, args: AnyObject...)
+    
+    /// Error Messages
+    func error(message: String, type: String, args: AnyObject...)
 }
 
-struct SocketEventHandler {
-    let event: String
-    let callback: NormalCallback
-    let id: NSUUID
-    
-    init(event: String, id: NSUUID = NSUUID(), callback: NormalCallback) {
-        self.event = event
-        self.id = id
-        self.callback = callback
+public extension SocketLogger {
+    func log(message: String, type: String, args: AnyObject...) {
+        abstractLog("Log", message: message, type: type, args: args)
     }
     
-    func executeCallback(items: [AnyObject], withAck ack: Int? = nil, withAckType type: Int? = nil,
-        withSocket socket: SocketIOClient) {
-                self.callback(items, emitAckCallback(socket, num: ack))
+    func error(message: String, type: String, args: AnyObject...) {
+        abstractLog("ERROR", message: message, type: type, args: args)
     }
+    
+    private func abstractLog(logType: String, message: String, type: String, args: [AnyObject]) {
+        guard log else { return }
+        
+        let newArgs = args.map {arg -> CVarArgType in String(arg)}
+        let replaced = String(format: message, arguments: newArgs)
+        
+        NSLog("%@ %@: %@", logType, type, replaced)
+    }
+}
+
+class DefaultSocketLogger: SocketLogger {
+    static var Logger: SocketLogger = DefaultSocketLogger()
+
+    var log = false
 }

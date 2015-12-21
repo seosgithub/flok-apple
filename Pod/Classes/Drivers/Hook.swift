@@ -3,29 +3,40 @@
         return ["if_hook_event:"]
     }
     
-    static var hookClassLookup: [String:(exists: Bool, instance: FlokHookHandler?)] = [:]
+    static var hookClassLookup: [String:FlokHookHandler.Type?] = [:]
     
     func if_hook_event(args: [AnyObject]) {
         let name = args[0] as! String
-        let info = args[1] as! [String:AnyObject]
+        var info = args[1] as! [String:AnyObject]
         
-        var hookClassInfo = FlokHookModule.hookClassLookup[name]
-        
-        if hookClassInfo == nil {
-            let hookHandlerClassName = "Flok\(name.snakeToClassCase)HookHandler"
+        //If the key is undefiend, attempt a lookup
+        if FlokHookModule.hookClassLookup.indexForKey(name) == nil {
+            let hookHandlerClassName = "\(name.snakeToClassCase)Hook"
             let hookHandlerClass = NSClassFromString(hookHandlerClassName) as? FlokHookHandler.Type
-            if hookHandlerClass != nil {
-                hookClassInfo = (exists: true, instance: hookHandlerClass!.init())
-            } else {
-                hookClassInfo = (exists: false, instance: nil)
-            }
-            
-            FlokHookModule.hookClassLookup[name] = hookClassInfo
+            FlokHookModule.hookClassLookup[name] = hookHandlerClass
         }
         
-        if hookClassInfo!.exists {
-            let instance = hookClassInfo!.instance
-            instance!.performSelector("handle:", withObject: info)
+        if let hookKlass = FlokHookModule.hookClassLookup[name] where hookKlass != nil {
+            let instance = hookKlass!.init()
+            instance.engine = engine
+           
+            //Replace views array
+            var views: [String:FlokView] = [:]
+            for (key, bp) in info["views"] as! [String:Int] {
+                views[key] = FlokControllerModule.cbpToView[bp]
+            }
+            
+            info["views"] = views
+            
+            if let cep = info["cep"] as? Int {
+                instance.completionEventPointer = cep
+            } else {
+                instance.completionEventPointer = nil
+            }
+            
+            instance.performSelector("handle:", withObject: info)
+        } else {
+            puts("Not handling hook \(name)")
         }
     }
 }

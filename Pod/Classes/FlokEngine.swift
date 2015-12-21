@@ -76,6 +76,7 @@ enum FlokPriorityQueue: Int {
         FlokDlinkModule(),
         FlokEventModule(),
         FlokHookModule(),
+        FlokAboutModule(),
     ]
     lazy var runtime: FlokRuntime = FlokRuntime()
     
@@ -110,7 +111,7 @@ enum FlokPriorityQueue: Int {
         
         super.init()
         context.setObject(self, forKeyedSubscript: "swiftFlokEngine")
-        context.evaluateScript("function if_dispatch(q) { if_dispatch_pending = q; }")
+        context.evaluateScript("if_dispatch_pending = []; function if_dispatch(q) { if_dispatch_pending = q; }")
         
         runtime.engine = self
         for e in modules { runtime.addModule(e) }
@@ -123,6 +124,7 @@ enum FlokPriorityQueue: Int {
     public func boot() {
         runtime.performSelector("if_timer_init:", withObject: [4])
         runtime.performSelector("if_rtc_init:", withObject: [])
+        runtime.performSelector("if_about_poll:", withObject: [])
         context.evaluateScript("_embed(\"root\", 0, {});")
         
         int_dispatch([])
@@ -145,7 +147,7 @@ enum FlokPriorityQueue: Int {
             } else {
                 self?.intDispatchMethod.callWithArguments([q])
                 
-                let pending = self?.context.evaluateScript("JSON.parse(JSON.stringify(if_dispatch_pending))").toArray() ?? []
+                let pending = self?.context.evaluateScript("if_dispatch_pending").toArray() ?? []
                 self?.context.evaluateScript("if_dispatch_pending = []")
                 if pending.count > 0 {
                     self?.if_dispatch(pending)
