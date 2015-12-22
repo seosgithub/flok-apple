@@ -29,9 +29,6 @@
     ],
     "Socket.IO-Client-Swift": [
       "~> 4.1"
-    ],
-    "CocoaAsyncSocket": [
-      "~> 7.4"
     ]
   }
 }
