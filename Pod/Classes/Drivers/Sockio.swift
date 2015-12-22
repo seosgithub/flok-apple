@@ -1,5 +1,5 @@
 import Foundation
-import Socket_IO_Client_Swift
+import SocketIO
 
 
 @objc class FlokSockioModule : FlokModule {
