@@ -4,6 +4,11 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>Alamofire.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>CocoaAsyncSocket.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -15,6 +20,11 @@
 			<false/>
 		</dict>
 		<key>Pods-flok_Tests.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>Socket.IO-Client-Swift.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -32,22 +42,32 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>03DC1C38E9C6DAFE6BA901C866FB8310</key>
+		<key>19AB8061EE142AAA0C7A8146CB4FD1B9</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>2D3F77AE6884C8913D921F0A4A309319</key>
+		<key>432ECC54282C84882B482CCB4CF227FC</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>6ED66FA8D298739E5DDAA61250E38835</key>
+		<key>53460C4E511E54AD257356D52E4EC756</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>A8BDC36A307C5691618512E9B61CA447</key>
+		<key>BF66DDEA7A0E89D732E08FB420D60061</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>EBC04638137B4C5914C827914B989B03</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>F7B5024B83192919C5E4119E3D0242DC</key>
 		<dict>
 			<key>primary</key>
 			<true/>

@@ -1,4 +1,6 @@
 import Foundation
+import Socket_IO_Client_Swift
+
 
 @objc class FlokSockioModule : FlokModule {
     override var exports: [String] {

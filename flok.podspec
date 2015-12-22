@@ -33,9 +33,7 @@ Pod::Spec.new do |s|
   s.requires_arc = true
 
   s.source_files = [
-    'Pod/Classes/**/*', 
-    'Pod/External/Alamofire/Source/**.swift',
-    'Pod/External/Socket.IO-Client-Swift/Source/**.swift'
+    'Pod/Classes/**/*'
   ]
   s.resource_bundles = {
     'flok' => ['Pod/Assets/*.png']
@@ -44,6 +42,6 @@ Pod::Spec.new do |s|
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
   # s.dependency 'AFNetworking', '~> 2.3'
-  #s.dependency 'Alamofire', '~> 3.0'
-  #s.dependency 'Socket.IO-Client-Swift', '~> 4.1'
+  s.dependency 'Alamofire', '~> 3.0'
+  s.dependency 'Socket.IO-Client-Swift', '~> 4.1'
 end
