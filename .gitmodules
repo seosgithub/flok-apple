@@ -4,3 +4,9 @@
 [submodule "Pod/Classes/External/socket.io"]
 	path = Pod/Classes/External/socket.io
 	url = git@github.com:socketio/socket.io.git
+[submodule "Pod/External/socket.io"]
+	path = Pod/External/socket.io
+	url = git@github.com:socketio/socket.io.git
+[submodule "Pod/External/Alamofire"]
+	path = Pod/External/Alamofire
+	url = git@github.com:Alamofire/Alamofire.git
