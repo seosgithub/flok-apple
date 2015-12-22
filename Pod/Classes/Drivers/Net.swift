@@ -1,6 +1,4 @@
-import Alamofire
-
-extension Alamofire.Method {
+extension Method {
     init(withString string: String) {
         switch string {
         case "OPTIONS":
@@ -39,7 +37,7 @@ extension Alamofire.Method {
         let params = args[2] as! [String:AnyObject]
         let tpBase = args[3] as! Int
         
-        Alamofire.request(Alamofire.Method(withString: verb), url, parameters: params).responseJSON { response in
+        request(Method(withString: verb), url, parameters: params).responseJSON { response in
             switch response.result {
             case .Success:
                 if let statusCode = response.response?.statusCode {
@@ -65,7 +63,7 @@ extension Alamofire.Method {
         let params = args[3] as! [String:AnyObject]
         let tpBase = args[4] as! Int
         
-        Alamofire.request(Alamofire.Method(withString: verb), url, parameters: params, headers: headers).responseJSON { response in
+        request(Method(withString: verb), url, parameters: params, headers: headers).responseJSON { response in
             switch response.result {
             case .Success:
                 if let statusCode = response.response?.statusCode {

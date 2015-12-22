@@ -1,0 +1,6 @@
+[submodule "Pod/Classes/External/Alamofire"]
+	path = Pod/Classes/External/Alamofire
+	url = git@github.com:Alamofire/Alamofire.git
+[submodule "Pod/Classes/External/socket.io"]
+	path = Pod/Classes/External/socket.io
+	url = git@github.com:socketio/socket.io.git

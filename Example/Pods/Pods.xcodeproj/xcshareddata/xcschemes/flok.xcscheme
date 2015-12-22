@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '75E09FD2CC43F9D31E4D0576'
+               BlueprintIdentifier = '0D9EA7776900CF977AB11EDB'
                BlueprintName = 'flok'
                ReferencedContainer = 'container:Pods.xcodeproj'
                BuildableName = 'flok.framework'>

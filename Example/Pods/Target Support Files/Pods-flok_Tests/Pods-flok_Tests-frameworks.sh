@@ -84,12 +84,8 @@ strip_invalid_archs() {
 
 
 if [[ "$CONFIGURATION" == "Debug" ]]; then
-  install_framework "Pods-flok_Tests/Alamofire.framework"
-  install_framework "Pods-flok_Tests/Socket_IO_Client_Swift.framework"
   install_framework "Pods-flok_Tests/flok.framework"
 fi
 if [[ "$CONFIGURATION" == "Release" ]]; then
-  install_framework "Pods-flok_Tests/Alamofire.framework"
-  install_framework "Pods-flok_Tests/Socket_IO_Client_Swift.framework"
   install_framework "Pods-flok_Tests/flok.framework"
 fi

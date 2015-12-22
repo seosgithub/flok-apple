@@ -17,18 +17,14 @@
     "ios": "8.4"
   },
   "requires_arc": true,
-  "source_files": "Pod/Classes/**/*",
+  "source_files": [
+    "Pod/Classes/**/*",
+    "Pod/External/Alamofire/Source/**.swift",
+    "Pod/External/Socket.IO-Client-Swift/Source/**.swift"
+  ],
   "resource_bundles": {
     "flok": [
       "Pod/Assets/*.png"
-    ]
-  },
-  "dependencies": {
-    "Alamofire": [
-      "~> 3.0"
-    ],
-    "Socket.IO-Client-Swift": [
-      "~> 4.1"
     ]
   }
 }
