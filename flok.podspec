@@ -42,5 +42,4 @@ Pod::Spec.new do |s|
   # s.dependency 'AFNetworking', '~> 2.3'
   s.dependency 'Alamofire', '~> 3.0'
   s.dependency 'Socket.IO-Client-Swift', '~> 4.1'
-  s.dependency 'CocoaAsyncSocket', '~> 7.4'
 end
