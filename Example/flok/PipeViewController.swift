@@ -4,7 +4,7 @@ import Foundation
 import CocoaAsyncSocket
 import flok
 
-class PipeViewController : UIViewController, GCDAsyncSocketDelegate, FlokEnginePipeDelegate {
+class PipeViewController : UIViewController, GCDAsyncSocketDelegate, FlokEnginePipeDelegate, FlokEngineDelegate {
     var socketQueue: dispatch_queue_t! = nil
     var listenSocket: GCDAsyncSocket! = nil
     var connectedSockets: NSMutableArray! = nil
@@ -29,8 +29,9 @@ class PipeViewController : UIViewController, GCDAsyncSocketDelegate, FlokEngineP
         let srcData = NSData(contentsOfFile: srcPath!)
         let src = NSString(data: srcData!, encoding: NSUTF8StringEncoding) as! String
         flok = FlokEngine(src: src, inPipeMode: true)
-        flok.rootView = self.view
+        flok.delegate = self
         flok.pipeDelegate = self
+        flok.ready()
         
     }
     
@@ -106,5 +107,16 @@ class PipeViewController : UIViewController, GCDAsyncSocketDelegate, FlokEngineP
                 puts("Couldn't create payload for int_dispatch to send to pipe")
             }
         }
+    }
+    
+    //-----------------------------------------------------------------------------------------------------
+    //FlokEngineDelegate
+    //-----------------------------------------------------------------------------------------------------
+    func flokEngineRootView(engine: FlokEngine) -> UIView {
+        return self.view
+    }
+    
+    func flokEngine(engine: FlokEngine, didPanicWithMessage message: String) {
+        NSLog("flok engine panic: \(message)")
     }
 }

@@ -9,6 +9,14 @@ import JavaScriptCore
     optional func flokEngineDidReceiveIntDispatch(q: [AnyObject])
 }
 
+public protocol FlokEngineDelegate: class {
+    //Return the view you wish the flok engine to take over for
+    func flokEngineRootView(engine: FlokEngine) -> UIView
+    
+    //Called when an un-recoverable error is encountered
+    func flokEngine(engine: FlokEngine, didPanicWithMessage message: String)
+}
+
 enum FlokPriorityQueue: Int {
     case Main = 0
     case Net = 1
@@ -59,11 +67,13 @@ enum FlokPriorityQueue: Int {
     let context = JSContext()
     
     //Pointers to internal javascript methods & variables
-    let intDispatchMethod: JSValue!
+    var intDispatchMethod: JSValue!
     
     var inPipeMode: Bool = false
     public weak var pipeDelegate: FlokEnginePipeDelegate?
     
+    public weak var delegate: FlokEngineDelegate!
+
     lazy var modules: [FlokModule] = [
         FlokPingModule(),
         FlokUiModule(),
@@ -84,7 +94,9 @@ enum FlokPriorityQueue: Int {
     lazy var operationQueues: [FlokPriorityQueue:NSOperationQueue] = [.Net:NSOperationQueue(), .Disk:NSOperationQueue(), .Cpu: NSOperationQueue(), .Gpu: NSOperationQueue()]
     
     //This should be moved to the UI module
-    public var rootView: UIView!
+    public var rootView: UIView {
+        return self.delegate.flokEngineRootView(self)
+    }
     
     public convenience init(src: String) {
         self.init(src: src, inPipeMode: false)
@@ -92,12 +104,17 @@ enum FlokPriorityQueue: Int {
     
     //Load with a javascript source, pipe mode intercepts
     //if_dispatch & int_dispatch
+    var src: String!
     public init(src: String, inPipeMode: Bool) {
+        self.src = src
         self.inPipeMode = inPipeMode
-        
+        super.init()
+    }
+    
+    public func ready() -> Bool {
         //Add an exception handler
         context.exceptionHandler = { context, exception in
-            NSException(name: "FlokEngineJavascriptRuntime", reason: exception.toString()!, userInfo: nil).raise()
+            self.delegate.flokEngine(self, didPanicWithMessage: exception.toString()!)
             return
         }
         
@@ -106,15 +123,16 @@ enum FlokPriorityQueue: Int {
         //Grab the int_dispatch function
         intDispatchMethod = context.objectForKeyedSubscript("int_dispatch")
         if (intDispatchMethod.toString() == "undefined") {
-            NSException(name: "FlokEngineJavascriptRuntime", reason: "Couldn't locate the int_dispatch function within the provided script", userInfo: nil).raise()
+            self.delegate.flokEngine(self, didPanicWithMessage: "Couldn't locate the int_dispatch function within the provided script")
+            return false
         }
         
-        super.init()
         context.setObject(self, forKeyedSubscript: "swiftFlokEngine")
         context.evaluateScript("if_dispatch_pending = []; function if_dispatch(q) { if_dispatch_pending = q; }")
         
         runtime.engine = self
         for e in modules { runtime.addModule(e) }
+        return true
     }
     
     public static func if_dispatch(q: [AnyObject]) {
@@ -167,7 +185,7 @@ enum FlokPriorityQueue: Int {
     }
     
     //Will be called by the JS engine itself or pipe to simulate the JS engine
-    public func if_dispatch(q: [AnyObject]) {
+    public func if_dispatch(var q: [AnyObject]) {
         //Priority array
         var isIncomplete = false
         for qq in q {
@@ -175,13 +193,13 @@ enum FlokPriorityQueue: Int {
                 if qq == "i" {
                     isIncomplete = true
                 } else {
-                    NSException(name: "FlokEngine", reason: "Got a string in the if_dispatch, but it wasn't 'i' for incomplete", userInfo: nil).raise()
+                    delegate.flokEngine(self, didPanicWithMessage: "Got a string in the if_dispatch, but it wasn't 'i' for incomplete")
+                    
                 }
             } else if let qq = qq as? [AnyObject] {
-                
                 let priorityNum = qq[0] as! Int
                 guard let priority =  FlokPriorityQueue(rawValue: priorityNum) else {
-                    NSException(name: "FlokEngine", reason: "Priority given, '\(priorityNum)' was not an available priority!", userInfo: nil).raise()
+                    delegate.flokEngine(self, didPanicWithMessage: "Priority given, '\(priorityNum)' was not an available priority!")
                     return
                 }
                 
@@ -205,7 +223,13 @@ enum FlokPriorityQueue: Int {
             }
         }
         
-        if isIncomplete { int_dispatch([]) }
+        if isIncomplete {
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)) {
+                dispatch_async(dispatch_get_main_queue()) {
+                    self.int_dispatch([])
+                }
+            }
+        }
     }
     
     func handleIfCommand(cmd: String, withArgs args: [AnyObject]) {

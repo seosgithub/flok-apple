@@ -1,6 +1,6 @@
 @objc class FlokUiModule : FlokModule {
     override var exports: [String] {
-        return ["if_ui_spec_init:", "if_init_view:", "if_attach_view:", "if_ui_spec_views_at_spot:", "if_ui_spec_view_exists:", "if_free_view:", "if_ui_spec_view_is_visible:"]
+        return ["if_ui_spec_init:", "if_init_view:", "if_attach_view:", "if_ui_spec_views_at_spot:", "if_ui_spec_view_exists:", "if_free_view:", "if_ui_spec_view_is_visible:", "if_view_hide:"]
     }
     
     func if_ui_spec_init(args: [AnyObject]) {
@@ -110,6 +110,49 @@
       var res = (FlokUiModule.uiTpToSelector[p] != nil)
       self.engine.int_dispatch([1, "spec", res])
     }
+    
+    //Remove a view from the view hierarchy asynchronously starting
+    //with the deepest items to avoid large pre-emptions
+    static var asyncRemoveQueue = NSOperationQueue()
+    static var asyncRemoveQueueWasConfigured = false
+    class func asyncRemoveViewFromSuperview(view: UIView, depth: Int=0, inout collect: [UIView]) {
+        //Setup queue to serial on first invokation of this function
+        if !asyncRemoveQueueWasConfigured {
+            asyncRemoveQueueWasConfigured = true
+            asyncRemoveQueue.maxConcurrentOperationCount = 1
+        }
+        
+        //Enqueue with a high priority (they always complete first)
+        let schedule = NSBlockOperation(block: {
+            let subviews = view.subviews
+            for v in subviews {
+                asyncRemoveViewFromSuperview(v, depth:depth+1, collect: &collect)
+                collect.append(v)
+            }
+        })
+        schedule.queuePriority = .High
+        asyncRemoveQueue.addOperation(schedule)
+
+        if depth == 0 {
+            collect.append(view)
+        
+            //On completion of the scheduling operation, queue all the collected views as to
+            //not trigger a recursive removal
+            let onScheduleCompletion = NSBlockOperation(block: {
+                for v in collect.reverse() {
+                    let op = NSBlockOperation(block: {
+                        dispatch_async(dispatch_get_main_queue()) {
+                            v.removeFromSuperview()
+                        }
+                    })
+                    op.queuePriority = .High
+                    asyncRemoveQueue.addOperation(op)
+                }
+            })
+            onScheduleCompletion.queuePriority = .Low
+            asyncRemoveQueue.addOperation(onScheduleCompletion)
+        }
+    }
 
     func if_free_view(args: [AnyObject]) {
       let vp = args[0] as! Int
@@ -120,35 +163,43 @@
 //        NSException(name: "FlokUIModule", reason: "Tried to free view with pointer \(args) but it didn't exist in uiTpToSelector", userInfo: nil).raise()
         return
       }
+        
       if let view = view as? FlokView {
         //Find all child views and spots
         var found = [view.bp]
         var unexploredViews = [view]
         while unexploredViews.count > 0 {
-          let unexploredView = unexploredViews.removeLast()
-          found.append(unexploredView.bp)
-          for s in unexploredView.spots {
-            found.append(s.bp)
-            unexploredViews.appendContentsOf(s.views)
-          }
+            let unexploredView = unexploredViews.removeLast()
+            found.append(unexploredView.bp)
+            for s in unexploredView.spots {
+                found.append(s.bp)
+                unexploredViews.appendContentsOf(s.views)
+            }
         }
-
+        
         //Pointers for both spots and views
         for p in found {
             if p != nil {
-          FlokUiModule.uiTpToSelector.removeValueForKey(p)
+                FlokUiModule.uiTpToSelector.removeValueForKey(p)
             }
         }
-
+        
         if let parentSpot = view.parentView as? FlokSpot {
-          let index = parentSpot.views.indexOf(view)
-          if let index = index {
-            parentSpot.views.removeAtIndex(index)
-          } else {
-            NSException(name: "FlokUIModule", reason: "The parent spot didn't contain our base pointer when tyring to remove view", userInfo: nil).raise()
-          }
+            let index = parentSpot.views.indexOf(view)
+            if let index = index {
+                parentSpot.views.removeAtIndex(index)
+            } else {
+                NSException(name: "FlokUIModule", reason: "The parent spot didn't contain our base pointer when tyring to remove view", userInfo: nil).raise()
+            }
         }
-        view.removeFromSuperview()
+        
+        //Remove the views asynchronously
+        view.hidden = true
+        var collect: [UIView] = []
+        FlokUiModule.asyncRemoveViewFromSuperview(view, collect: &collect)
+        
+        
+//        view.removeFromSuperview()
 
       } else {
         NSException(name: "FlokUIModule", reason: "Tried to free view with pointer \(args) but it wasn't a FlokView: \(view)", userInfo: nil).raise()
@@ -161,11 +212,20 @@
       let view = FlokUiModule.uiTpToSelector[p]
 
       if let view = view as UIView! {
-        let isVisible = view.isDescendantOfView(engine.rootView)
+        let isVisible = view.isDescendantOfView(engine.rootView) && (view.hidden == false)
         engine.int_dispatch([1, "spec", isVisible])
       } else {
         NSException(name: "FlokUIModule", reason: "Tried to check if view with pointer \(p) was visible, but that pointer was not in the selectors table or it wasn't a UIView", userInfo: nil).raise()
         return
       }
+    }
+    
+    func if_view_hide(args: [AnyObject]) {
+        let vp = args[0] as! Int
+        let hidden = args[1] as! Bool
+        
+        if let view = FlokUiModule.uiTpToSelector[vp] {
+            view.hidden = hidden
+        }
     }
 }
