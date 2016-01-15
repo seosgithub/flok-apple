@@ -1,6 +1,6 @@
 @objc class FlokUiModule : FlokModule {
     override var exports: [String] {
-        return ["if_ui_spec_init:", "if_init_view:", "if_attach_view:", "if_ui_spec_views_at_spot:", "if_ui_spec_view_exists:", "if_free_view:", "if_ui_spec_view_is_visible:", "if_view_hide:"]
+        return ["if_ui_spec_init:", "if_init_view:", "if_attach_view:", "if_ui_spec_views_at_spot:", "if_ui_spec_view_exists:", "if_free_view:", "if_ui_spec_view_is_visible:", "if_hide_view:"]
     }
     
     func if_ui_spec_init(args: [AnyObject]) {
@@ -220,7 +220,7 @@
       }
     }
     
-    func if_view_hide(args: [AnyObject]) {
+    func if_hide_view(args: [AnyObject]) {
         let vp = args[0] as! Int
         let hidden = args[1] as! Bool
         
