@@ -59,3 +59,12 @@ task :pipe => :build do
     server.begin_pipe
   }
 end
+
+#Do we support xcode?
+task :can_build do
+  if system("which xcodebuild")
+    exit 0
+  else
+    exit -1
+  end
+end
