@@ -65,6 +65,7 @@ task :can_build do
   if system("which xcodebuild")
     exit 0
   else
+    $stderr.puts "[Platform does not support 'apple'.  You do not have xcodebuild]"
     exit -1
   end
 end
