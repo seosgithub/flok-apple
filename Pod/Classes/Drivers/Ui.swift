@@ -41,6 +41,9 @@
     }
     
     func if_attach_view(args: [AnyObject]) {
+        if NSThread.isMainThread() == false {
+            assert(false)
+        }
         //NSException(name: "fail", reason: "if_attach-afil-spec_views_at_spot", userInfo: nil).raise()
         let vp = args[0] as! Int
         let p = args[1] as! Int
@@ -55,7 +58,7 @@
         }
         
         if target == nil {
-            NSException(name: "FlokUIModule", reason: "Tried to if_attach_view with \(args), but the target couldn't be located", userInfo: nil).raise()
+            puts("Tried to if_attach_view with \(args), but the target couldn't be located")
             return
         }
 

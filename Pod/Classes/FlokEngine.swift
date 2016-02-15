@@ -158,6 +158,8 @@ enum FlokPriorityQueue: Int {
         int_dispatch(arr)
     }
     
+    //This is not the 'real' int_dispatch, it's a proxy function into the js engine's version
+    //of int_dispatch
     public func int_dispatch(q: [AnyObject]) {
         let block = { [weak self] in
             if (self?.inPipeMode ?? false) {
